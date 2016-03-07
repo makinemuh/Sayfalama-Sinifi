@@ -31,12 +31,26 @@ $pagination = new Pagination($toplamOgeSayisi, $sayfaBasinaOgeSayisi, $gecerliSa
 ## Farklı senaryo
 Basit bir örnekle, bir array sayfalayalım
 ```php
-$arr = [
-  'Gönderi 1',
-  'Gönderi 1',
-  'Gönderi 1',
-  'Gönderi 1',
-  'Gönderi 1',
-  'Gönderi 1',
+$items = [
+  'Öğe 1',
+  'Öğe 2',
+  'Öğe 3',
+  'Öğe 4',
+  'Öğe 5',
+  'Öğe 6',
+  'Öğe 7',
+  'Öğe 8'
 ];
+
+$itemCount = count($items);
+$curPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$perPage = 2;
+$url = '?page=(:num)';
+
+$pagination = new Pagination($itemCount, $perPage, $curPage, $url);
+
+$limit = explode(',', $pagination->limit());
+$items = array_slice($items, $limit[0], $limit[1]);
+print_r($items);
+echo $pagination->toHtml();
 ```
