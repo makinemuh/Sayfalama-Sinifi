@@ -1,0 +1,16 @@
+{
+  "name": "DemirPHP/Pagination",
+  "description": "Sayfalama sınıfı",
+  "keywords": ["pagination", "sayfalama", "dasta", "veri"],
+  "homepage": "http://demirphp.com",
+  "authors": [
+    {
+      "name": "Yılmaz Demir",
+      "email": "demiriy@gmail.com",
+      "homepage": "http://yilmazdemir.com.tr",
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0
+  }
+}
