@@ -1,11 +1,13 @@
 <?php
 
+namespace DemirPHP;
+
 /**
  * Sayfalama Sınıfı
  * Verileri sayfalama sınıfı
  * @author Yılmaz Demir <demiriy@gmail.com>
  * @link http://demirphp.com
- * @package Pagination
+ * @package DemirPHP\Pagination
  * @version 1.0
  */
 

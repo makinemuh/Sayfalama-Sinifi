@@ -1,8 +1,10 @@
 {
   "name": "demirphp/pagination",
   "description": "Sayfalama sınıfı",
-  "keywords": ["pagination", "sayfalama", "dasta", "veri"],
+  "keywords": ["pagination", "sayfalama", "data", "veri", "veri sayfalama", "sayfalama sınıfı"],
   "homepage": "http://demirphp.com",
+  "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "name": "Yılmaz Demir",
@@ -12,5 +14,10 @@
   ],
   "require": {
     "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "DemirPHP\\": "src/DemirPHP/"
+    }
   }
 }
