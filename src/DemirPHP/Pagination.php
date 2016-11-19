@@ -47,6 +47,16 @@ class Pagination
 	 * @var integer
 	 */
 	protected static $maxPages = 7;
+	
+	/**
+	 *
+	 */
+	public static $template = [
+		'nextPage' => '<li><a href="%s">&laquo; Önceki Sayfa</a></li>',
+		'prevPage' => '<li><a href="%s">Sonraki Sayfa &raquo;</a></li>',
+		'pageNumber' => '<li%s><a href="%s">%s</a></li>',
+		'disabledNumber' => '<li class="disabled"><span>%s</span></li>'
+	];
 
 	/**
 	 * Sayfa sayısını günceller
@@ -228,8 +238,8 @@ class Pagination
 	{
 		if (self::$totalPages < 1) return NULL;
 		$html = '<ul class="pager">';
-		if (self::getPrevPageUrl()) $html .= '<li><a href="' . self::getPrevPageUrl() . '">&laquo; Önceki Sayfa</a></li>';
-		if (self::getNextPageUrl()) $html .= '<li><a href="' . self::getNextPageUrl() . '">Sonraki Sayfa &raquo;</a></li>';
+		if (self::getPrevPageUrl()) $html .= sprintf(self::$template['prevPage'], self::getPrevPageUrl());
+		if (self::getNextPageUrl()) $html .= sprintf(self::$template['nextPage'], self::getNextPageUrl());
 		$html .= '</ul>';
 		return $html;
 	}
@@ -241,15 +251,15 @@ class Pagination
 	{
 		if (self::$totalPages <= 1) return NULL;
 		$html = '<ul class="pager">';
-		if ($pager && self::getPrevPageUrl()) $html .= '<li><a href="' . self::getPrevPageUrl() . '">&laquo; Önceki</a></li>';
+		if ($pager && self::getPrevPageUrl()) $html .= sprintf(self::$template['prevPage'], self::getPrevPageUrl());
 		foreach (self::getPages() as $page) {
 			if (is_null($page['url'])) {
-				$html .= '<li class="disabled"><span>' . $page['number'] . '</span></li>';
+				$html .= sprintf(self::$template['disabledNumber'], $page['number']);
 			} else {
-				$html .= '<li' . ($page['current'] ? ' class="active"' : NULL) . '><a href="' . $page['url'] . '">' . $page['number'] . '</a></li>';
+				$html .= sprintf(self::$template['pageNumber'], ($page['current'] ? ' class="active"' : NULL), $page['url'], $page['number']);
 			}
 		}
-		if ($pager && self::getNextPageUrl()) $html .= '<li><a href="' . self::getNextPageUrl() . '">Sonraki &raquo;</a></li>';
+		if ($pager && self::getNextPageUrl()) $html .= sprintf(self::$template['nextPage'], self::getNextPageUrl());
 		$html .= '</ul>';
 
 		return $html;
