@@ -52,10 +52,12 @@ class Pagination
 	 *
 	 */
 	public static $template = [
+		'ul' => '<ul class="pager">',
 		'nextPage' => '<li><a href="%s">&laquo; Önceki Sayfa</a></li>',
 		'prevPage' => '<li><a href="%s">Sonraki Sayfa &raquo;</a></li>',
 		'pageNumber' => '<li%s><a href="%s">%s</a></li>',
-		'disabledNumber' => '<li class="disabled"><span>%s</span></li>'
+		'disabledNumber' => '<li class="disabled"><span>%s</span></li>',
+		'/ul' => '</ul>'
 	];
 
 	/**
@@ -237,10 +239,10 @@ class Pagination
 	public static function getPagerAsHtml()
 	{
 		if (self::$totalPages < 1) return NULL;
-		$html = '<ul class="pager">';
+		$html = self::$template['ul'];
 		if (self::getPrevPageUrl()) $html .= sprintf(self::$template['prevPage'], self::getPrevPageUrl());
 		if (self::getNextPageUrl()) $html .= sprintf(self::$template['nextPage'], self::getNextPageUrl());
-		$html .= '</ul>';
+		$html .= self::$template['/ul'];
 		return $html;
 	}
 
@@ -250,7 +252,7 @@ class Pagination
 	public static function getPagesAsHtml($pager = TRUE)
 	{
 		if (self::$totalPages <= 1) return NULL;
-		$html = '<ul class="pager">';
+		$html = self::$template['ul'];
 		if ($pager && self::getPrevPageUrl()) $html .= sprintf(self::$template['prevPage'], self::getPrevPageUrl());
 		foreach (self::getPages() as $page) {
 			if (is_null($page['url'])) {
@@ -260,7 +262,7 @@ class Pagination
 			}
 		}
 		if ($pager && self::getNextPageUrl()) $html .= sprintf(self::$template['nextPage'], self::getNextPageUrl());
-		$html .= '</ul>';
+		$html .= self::$template['/ul'];
 
 		return $html;
 	}
