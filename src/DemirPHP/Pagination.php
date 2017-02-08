@@ -2,333 +2,213 @@
 
 namespace DemirPHP;
 
-/**
- * Sayfalama Sınıfı
- * Verileri sayfalama sınıfı
- * @author Yılmaz Demir <demiriy@gmail.com>
- * @link http://demirphp.com
- * @package DemirPHP\Pagination
- * @version 1.0
- */
-
 class Pagination
 {
 	/**
-	 * Numara tutucu
+	 * @var integer
+	 */
+	public static $totalItems;
+
+	/**
+	 * @var integer
+	 */
+	public static $totalPages;
+
+	/**
+	 * @var integer
+	 */
+	public static $currentPage;
+
+	/**
+	 * @var integer
+	 */
+	public static $perPage = 10;
+
+	/**
 	 * @var string
 	 */
-	public $placeholder = '(:num)';
+	public static $placeholder = ':number';
 
 	/**
-	 * Toplam öğe sayısı
-	 * @var integer
-	 */
-	public $totalItems;
-
-	/**
-	 * Toplam sayfa sayısı
-	 * @var integer
-	 */
-	public $totalPages;
-
-	/**
-	 * Sayfa başına öğe sayısı
-	 * @var integer
-	 */
-	public $perPage;
-
-	/**
-	 * Geçerli sayfa
-	 * @var integer
-	 */
-	public $curPage;
-
-	/**
-	 * Bağlantı kalıbı
 	 * @var string
 	 */
-	public $pattern;
+	public static $url = '?page=:number';
 
 	/**
-	 * En fazla gösterilecek sayfa sayısı
-	 * @var integer
+	 * @return integer
 	 */
-	public $maxPages = 7;
-
-	/**
-	 * Sınıf başlatıcı
-	 * @param $totalItems Toplam öğe sayısı
-	 * @param $perPage Sayfa başına öğe sayısı
-	 * @param $curPage Geçerli sayfa numarası
-	 * @param $pattern Bağlantı kalıbı
-	 */
-	public function __construct($totalItems, $perPage, $curPage, $pattern)
+	public static function getTotalItems()
 	{
-		$this->totalItems = $totalItems;
-		$this->perPage = $perPage;
-		$this->curPage = $curPage;
-		$this->pattern = $pattern;
-
-		$this->updateTotalPages();
+		return self::$totalItems;
 	}
 
 	/**
-	 * Toplam sayfa sayısını hesaplar
-	 */
-	protected function updateTotalPages()
-	{
-		$this->totalPages =
-			($this->perPage == 0 ? 0 : (int) ceil($this->totalItems / $this->perPage));
-	}
-
-	/**
-	 * Gösterilecek en fazla sayfa sayısını belirler
-	 * @param integer $maxPages
-	 */
-	public function setMaxPages($maxPages)
-	{
-		if ($maxPages > 3) {
-			$this->maxPages = $maxPages;
-		}
-	}
-
-	/**
-	 * Geçerli sayfa numarasını belirler
-	 * @param integer $curPage
-	 */
-	public function setCurPage($curPage)
-	{
-		$this->curPage = $curPage;
-	}
-
-	/**
-	 * Sayfa başına gönderi sayısı
-	 * @param integer $perPage
-	 */
-	public function setPerPage($perPage)
-	{
-		$this->perPage = $perPage;
-		$this->updateTotalPages();
-	}
-
-	/**
-	 * Toplam öğe sayısını belirler
 	 * @param integer $totalItems
+	 * @return null
 	 */
-	public function setTotalItems($totalItems)
+	public static function setTotalItems($totalItems)
 	{
-		$this->totalItems = $totalItems;
-		$this->updateTotalPages();
+		self::$totalItems = (int) $totalItems;
+		self::setTotalPages();
 	}
 
 	/**
-	 * Bağlantı kalıbı belirler
-	 * @param string $pattern
+	 * @return integer
 	 */
-	public function setPattern($pattern)
+	public static function getTotalPages()
 	{
-		$this->pattern = $pattern;
+		return self::$totalPages;
 	}
 
 	/**
-	 * Sayfa numarasına göre URL kalıbı döndürür
-	 * @param integer $pageNum
+	 * @return integer
+	 */
+	public static function setTotalPages()
+	{
+		return self::$totalPages = (int) ceil( self::$totalItems / self::$perPage );
+	}
+
+	/**
+	 * @param integer $perPage
+	 * @return null
+	 */
+	public static function setPerPage($perPage)
+	{
+		self::$perPage = (int) $perPage;
+		self::setTotalPages();
+	}
+
+	/**
+	 * @return integer
+	 */
+	public static function getCurrentPage()
+	{
+		return self::$currentPage;
+	}
+
+	/**
+	 * @param integer
+	 * @return integer
+	 */
+	public static function setCurrentPage($currentPage)
+	{
+		return self::$currentPage = (int) $currentPage;
+	}
+
+	/**
+	 * @param integer
 	 * @return string
 	 */
-	public function getPageUrl($pageNum)
+	public static function getUrl($page)
 	{
-		return str_replace($this->placeholder, $pageNum, $this->pattern);
+		return str_replace( self::$placeholder, $page, self::$url );
 	}
 
 	/**
-	 * Sonraki sayfa numarasını döndürür
-	 * @return mixed
+	 * @param string $url
+	 * @return string 
 	 */
-	public function getNextPage()
+	public static function setUrl($url)
 	{
-		if ($this->curPage < $this->totalPages) {
-			return $this->curPage + 1;
+		return self::$url = $url;
+	}
+
+	/**
+	 * @return integer|boolean
+	 */
+	public static function getNextPage()
+	{
+		if ( self::$currentPage < self::$totalPages ) {
+			return self::$currentPage + 1;
 		}
 		return false;
 	}
 
 	/**
-	 * Bir önceki sayfa numarasını döndürür
-	 * @return mixed
+	 * @return integer|boolean
 	 */
-	public function getPrevPage()
+	public static function getPrevPage()
 	{
-		if ($this->curPage > 1) {
-			return $this->curPage - 1;
+		if ( self::$currentPage > 1 ) {
+			return self::$currentPage - 1;
 		}
 		return false;
 	}
 
 	/**
-	 * Bir sonraki sayfa URL'sini döndürür
-	 * @return string
+	 * @return boolean|string
 	 */
-	public function getNextUrl()
+	public static function getNextUrl()
 	{
-		if (!$this->getNextPage()) {
+		if ( !self::getNextPage() ) {
 			return false;
 		}
-		return $this->getPageUrl($this->getNextPage());
+		return self::getUrl( self::getNextPage() );
 	}
 
 	/**
-	 * Bir önceki sayfa URL'sini döndürür
-	 * @return string
+	 * @return boolean|string
 	 */
-	public function getPrevUrl()
+	public static function getPrevUrl()
 	{
-		if (!$this->getPrevPage()) {
+		if ( !self::getPrevPage() ) {
 			return false;
 		}
-		return $this->getPageUrl($this->getPrevPage());
+		return self::getUrl( self::getPrevPage() );
 	}
 
 	/**
-	 * Sayfaları oluşturur
+	 * @return boolean|string
+	 */
+	public static function getFirstUrl()
+	{
+		if (self::$currentPage === 1) {
+			return false;
+		}
+		return self::getUrl(1);
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getLastUrl()
+	{
+		if (self::$currentPage === self::$totalPages) {
+			return false;
+		}
+		return self::getUrl(self::$totalPages);
+	}
+
+	/**
+	 * @return integer
+	 */
+	public static function getLimit()
+	{
+		return self::$perPage;
+	}
+
+	/**
+	 * @return integer
+	 */
+	public static function getOffset()
+	{
+		return (self::$currentPage * self::$perPage) - self::$perPage;
+	}
+
+	/**
 	 * @return array
 	 */
-	public function getPages()
+	public static function getPages()
 	{
 		$pages = [];
 
-		if ($this->totalPages <= 1) {
-			return [];
+		if (self::$totalPages <= 1) return false;
+		for ($i=1; $i <= self::$totalPages; $i++) {
+			$current = self::$currentPage === $i;
+			if ($current) $pages[$i]['active'] = true;
+			$pages[$i]['number'] = $i;
+			$pages[$i]['url'] = self::getUrl($i);
 		}
-
-		if ($this->totalPages <= $this->maxPages) {
-			for ($i = 1; $i <= $this->totalPages; $i++) {
-				$pages[] = $this->createPage($i, $i == $this->curPage);
-			}
-		} else {
-			$numAdjacents = (int) floor(($this->maxPages - 3) / 2);
-
-			if ($this->curPage + $numAdjacents > $this->totalPages) {
-				$slidingStart = $this->totalPages - $this->maxPages + 2;
-			} else {
-				$slidingStart = $this->curPage - $numAdjacents;
-			}
-
-			if ($slidingStart < 2) $slidingStart = 2;
-
-			$slidingEnd = $slidingStart + $this->maxPages - 3;
-
-			if ($slidingEnd >= $this->totalPages) $slidingEnd = $this->totalPages - 1;
-
-
-			$pages[] = $this->createPage(1, $this->curPage == 1);
-
-			if ($slidingStart > 2) {
-				$pages[] = $this->createPageEllipsis();
-			}
-
-			for ($i = $slidingStart; $i <= $slidingEnd; $i++) {
-				$pages[] = $this->createPage($i, $i == $this->curPage);
-			}
-
-			if ($slidingEnd < $this->totalPages - 1) {
-				$pages[] = $this->createPageEllipsis();
-			}
-
-			$pages[] = $this->createPage($this->totalPages, $this->curPage == $this->totalPages);
-		}
-
 		return $pages;
-	}
-
-	/**
-	 * Sayfa oluşturur
-	 * @param integer $pageNum
-	 * @param boolean $current
-	 * @return array
-	 */
-	protected function createPage($pageNum, $current = false)
-	{
-		return [
-			'num' => $pageNum,
-			'url' => $this->getPageUrl($pageNum),
-			'current' => $current
-		];
-	}
-
-	/**
-	 * ... oluşturur
-	 * @return array
-	 */
-	protected function createPageEllipsis()
-	{
-		return [
-			'num' => '...',
-			'url' => null,
-			'isCurrent' => false,
-		];
-	}
-
-	/**
-	 * Sayfaları HTML biçiminde döndürür
-	 * @param boolean $pager
-	 * @return string
-	 */
-	public function toHtml($pager = false)
-	{
-		if ($pager) {
-			if ($this->totalPages <= 1) return null;
-
-			$html = '<ul class="pager">';
-			if ($this->getPrevUrl()) {
-				$html .= '<li class="previous"><a href="' . $this->getPrevUrl() . '">&laquo; Önceki sayfa</a></li>';
-			}
-
-			if ($this->getNextUrl()) {
-				$html .= '<li class="next"><a href="' . $this->getNextUrl() . '">Sonraki sayfa &raquo;</a></li>';
-			}
-
-			$html .= '</ul>';
-		} else {
-			if ($this->totalPages <= 1) return null;
-
-			$html = '<ul class="pagination">';
-			if ($this->getPrevUrl()) {
-				$html .= '<li><a href="' . $this->getPrevUrl() . '">&laquo; Önceki</a></li>';
-			}
-
-			foreach ($this->getPages() as $page) {
-				if ($page['url']) {
-					$html .= '<li' . ($page['current'] ? ' class="active"' : null) . '><a href="' . $page['url'] . '">' . $page['num'] . '</a></li>';
-				} else {
-					$html .= '<li class="disabled"><span>' . $page['num'] . '</span></li>';
-				}
-			}
-
-			if ($this->getNextUrl()) {
-				$html .= '<li><a href="' . $this->getNextUrl() . '">Sonraki &raquo;</a></li>';
-			}
-
-			$html .= '</ul>';
-		}
-		return $html;
-	}
-
-	/**
-	 * Sınıfı string tipine döndürür
-	 */
-	public function __toString()
-	{
-		return $this->toHtml() . null;
-	}
-
-	/**
-	 * SQL Sorgusu için LIMIT döndürür
-	 * 1,10 gibi
-	 * @return string
-	 */
-	public function limit()
-	{
-		$limit = ($this->curPage * $this->perPage) - $this->perPage;
-		return $limit . ',' . $this->perPage;
 	}
 }
